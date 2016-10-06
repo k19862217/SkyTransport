@@ -1,0 +1,74 @@
+@import models._
+@import util.Formatters._
+@(p: PackageInfo,editable:Boolean, suffix:String = "" )
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th style="width:10%">物品名称</th>
+            <td style="width:40%">
+                @if( editable ){
+                    <input type="text" name="goodsName@suffix">
+                } else {@p.goodsName}
+            </td>
+            <th style="width:10%">物品价格</th>
+            <td style="width:40%">
+                @if( editable ){
+                    <input type="text" name="goodsPrice@suffix">
+                } else {￥@p.goodsPrice}
+
+            </td>
+        </tr>
+        <tr>
+            <th style="width:10%">物品数量</th>
+            <td style="width:40%">
+                @if( editable ){
+                    <input type="text" name="goodsCount@suffix">
+                } else {@p.goodsCount}
+            </td>
+            <th style="width:10%">物品重量</th>
+            <td style="width:40%">
+                <input type="text" name="goodsWeight@suffix" value = "@{
+                    p.goodsWeight
+                }">kg
+            </td>
+        </tr>
+        <tr>
+            <th style="width:10%">预报时间</th>
+            <td style="width:40%">
+                @if( editable ){
+                    @templates.timefield( "forecastTime"+suffix,p.forecastTime)
+                } else {@p.forecastTime.map(printDateTime)}
+
+            </td>
+            <th style="width:10%">订单号</th>
+            <td style="width:40%"><input type="text" name="orderNumber@suffix" value = "@{
+                p.orderNumber
+            }"></td>
+        </tr>
+        <tr>
+            <th style="width:10%">到达时间</th>
+            <td style="width:40%"> @templates.timefield("arrivedTime"+suffix, p.arrivedTime) </td>
+            <th style="width:10%">物品状态</th>
+            <td style="width:40%">
+                @templates.package_status_options("status"+suffix,p.status)
+            </td>
+        </tr>
+        <tr>
+            <th>仓库</th>
+            <td>
+                <select name="warehouseId" >
+                    <option value="1">东京仓库</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th style="width:10%">物品描述</th>
+            <td style="width:40% ; word-break:break-all ;"  colspan="3">
+                <textarea name="description@suffix" cols="100" rows="5">@{
+                    p.description
+                }</textarea>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,56 @@
+@import models.Transaction
+@(editable:Boolean,t:Transaction)
+
+<link href="/assets/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+<script src="/assets/js/jquery-ui.min.js"></script>
+
+<div id="transaction_options">
+<input type="checkbox" id="check_insurance" name="check_insurance"><label for="check_insurance">  保险 </label>
+<input type="checkbox" id="check_check" name="check_check"><label for="check_check"> 点检 </label>
+<input type="checkbox" id="check_firm" name="check_firm"><label for="check_firm">加固 </label>
+<input type="checkbox" id="check_fastdelivery" name="check_fastdelivery"><label for="check_fastdelivery">加速 </label>
+<input type="checkbox" id="check_divide" name="check_divide"><label for="check_divide">分箱 </label>
+<input type="checkbox" id="check_combine" name="check_combine"><label for="check_combine">合箱 </label>
+</div>
+
+<script type="text/javascript">
+
+    function click_checkbox(key) {
+        $( key ).next().trigger("click")
+    }
+        $("#transaction_options label").button().bind('click',function(){
+            var value = null
+            if ($(this).button('option','icons').primary)
+                value = null
+            else value =  "ui-icon-check"
+            $(this).button('option','icons',{ primary: value })
+            if ( $(this).attr("for")  == "check_divide" && $("#check_combine").prop("checked") ){
+                click_checkbox("#check_combine")
+            }
+            if ( $(this).attr("for")  == "check_combine" && $("#check_divide").prop("checked") ){
+                click_checkbox("#check_divide")
+            }
+        })
+
+        $("#transaction_options input").css("display","none")
+
+    @if( t.needInsurance == Some("1") ){
+            click_checkbox("#check_insurance")
+        }
+    @if( t.needCheck == Some("1") ){
+            click_checkbox("#check_check")
+        }
+    @if( t.needFastDelivery == Some("1") ){
+            click_checkbox("#check_fastdelivery")
+        }
+    @if( t.needFirm == Some("1") ){
+            click_checkbox("#check_firm")
+        }
+    @if( t.needDivide == Some("1") ){
+            click_checkbox("#check_divide")
+        }
+    @if( t.needCombine == Some("1") ){
+            click_checkbox("#check_combine")
+        }
+
+</script>

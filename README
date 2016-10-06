@@ -1,0 +1,23 @@
+## Transport Web Application
+
+### Librares and framework
+
+This is a scala web application using play framework. 
+
+The following libs & database  are used.
+
+- slick - mysql
+- play
+- jackson
+- fabric
+
+### Build
+
+Please use the following command to build war.
+
+```
+play war
+```
+
+### Sample
+

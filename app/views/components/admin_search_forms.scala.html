@@ -1,0 +1,55 @@
+@(  enable_user_search_form:Boolean,enable_package_search_form:Boolean,enable_transaction_search_form:Boolean  )
+<style>
+    .form_block{/*
+        float: right;
+        margin: 10px 10px 10px 10px;
+    */
+    }
+</style>
+
+@draw_user_search_form() = {
+<div class="form_block">
+    <h1>用户搜索条件</h1>
+    <span>User ID</span><input name="user_id" type="text"> <br/>
+    <span>User name</span><input name="user_name" type="text"><br/>
+    <span>Email</span><input name="email" type="text"><br/>
+</div>
+}
+
+@draw_package_search_form() = {
+<div class="form_block">
+    <h1>Package 搜索条件</h1>
+    <span>Package ID</span><input name="package_id" type="text"><br/>
+    <span>Package Order Number</span><input name="package_orderNumber" type="text"><br/>
+    <span>goodsName</span><input name="goodsName" type="text"><br/>
+    <span>package_status</span>
+
+    @templates.package_status_options("package_status",None)
+
+    <br/>
+
+</div>
+}
+
+@draw_transaction_search_form() = {
+<div class="form_block">
+    <h1>Transaction 搜索条件</h1>
+    <span>Transaction id</span><input name="transaction_id" type="text"><br/>
+    <span>Transaction Order Number</span><input name="transaction_orderNumber" type="text"><br/>
+    <span>status</span><input name="transaction_status" type="text"><br/>
+</div>
+<div style="float:clear"></div>
+}
+
+@if(enable_user_search_form){
+    @draw_user_search_form()
+}
+
+@if(enable_package_search_form){
+    @draw_package_search_form()
+}
+
+@if(enable_transaction_search_form){
+    @draw_transaction_search_form()
+}
+

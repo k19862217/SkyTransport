@@ -1,0 +1,12 @@
+@import enumerate.TransactionStatus._
+@import enumerate.TransactionStatus
+
+@(input_id:String,default:Option[Int] = None)
+
+<select name="@input_id" id="@input_id">
+    <option @if( default.isEmpty ){SELECTED}></option>
+    @for( k <- allStatus  ){
+    <option value="@k" @if( Some(k) == default ){SELECTED} >@TransactionStatus.print(k)</option>
+}
+</select>
+

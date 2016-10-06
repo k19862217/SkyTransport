@@ -1,0 +1,94 @@
+.modal-header {
+        padding:9px 15px;
+        border-bottom:1px solid #eee;
+        background-color: #3c8dbc;
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-top-right-radius: 5px;
+        -moz-border-radius-topleft: 5px;
+        -moz-border-radius-topright: 5px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        }
+        .vertical-center {
+        min-height: 100%;  /* Fallback for vh unit */
+        /* You might also want to use
+        'height' property instead.
+
+        Note that for percentage values of
+        'height' or 'min-height' properties,
+        the 'height' of the parent element
+        should be specified explicitly.
+
+        In this case the parent of '.vertical-center'
+        is the <body> element */
+
+/* Make it a flex container */
+display: -webkit-box;
+display: -moz-box;
+display: -ms-flexbox;
+display: -webkit-flex;
+display: flex;
+
+/* Align the bootstrap's container vertically */
+-webkit-box-align : center;
+-webkit-align-items : center;
+-moz-box-align : center;
+-ms-flex-align : center;
+align-items : center;
+
+/* In legacy web browsers such as Firefox 9
+we need to specify the width of the flex container */
+width: 100%;
+
+/* Also 'margin: 0 auto' doesn't have any effect on flex items in such web browsers
+hence the bootstrap's container won't be aligned to the center anymore.
+
+Therefore, we should use the following declarations to get it centered again */
+-webkit-box-pack : center;
+-moz-box-pack : center;
+-ms-flex-pack : center;
+-webkit-justify-content : center;
+justify-content : center;
+}
+
+.jumbotron.vertical-center {
+margin-bottom: 0; /* Remove the default bottom margin of .jumbotron */
+background-color: #fff;
+}
+
+#custom-search-input{
+padding: 3px;
+border: solid 1px #E4E4E4;
+border-radius: 6px;
+background-color: #fff;
+}
+
+#custom-search-input input{
+border: 0;
+box-shadow: none;
+}
+
+#custom-search-input select{
+border: 0;
+box-shadow: none;
+}
+
+#custom-search-input button{
+margin: 2px 0 0 0;
+background: none;
+box-shadow: none;
+border: 0;
+color: #666666;
+padding: 0 8px 0 10px;
+border-left: solid 1px #ccc;
+}
+
+#custom-search-input button:hover{
+border: 0;
+box-shadow: none;
+border-left: solid 1px #ccc;
+}
+
+#custom-search-input .glyphicon-search{
+font-size: 23px;
+}

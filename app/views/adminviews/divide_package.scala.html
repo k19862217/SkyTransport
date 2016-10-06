@@ -1,0 +1,40 @@
+@import models._
+@(num:Int,original_package:PackageInfo)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @templates.include()
+    <meta charset="UTF-8">
+    <title>Title</title>
+    </head>
+    <body class="skin-blue layout-boxed">
+        @templates.header()
+        @adminviews.admin_sidebar()
+        <div class="wrapper">
+            <div class="content-wrapper">
+
+                <section class="content-header">
+                    <h1>
+                        包裹详细
+                    </h1>
+                </section>
+
+                    <!-- Main content -->
+                <section class="content">
+                    <p class="lead">分割包裹 @num 个</p>
+                    <div class="table-responsive">
+                        <form method="POST">
+                            @for( i <- 1 to num ){
+                                @components.admin_package_detailed(original_package,true,s"_$i")
+                            }
+                            <input type="submit" value="Insert">
+                        </form>
+                    </div>
+
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

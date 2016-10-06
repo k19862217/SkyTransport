@@ -1,0 +1,38 @@
+@(sql_str:String,headers:Seq[String],content:Seq[Seq[String]])
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SQL Console</title>
+</head>
+<body>
+    <h1>SQL Console</h1>
+    <h2>Your SQL: @sql_str</h2>
+    <div>
+        <form method="POST">
+        <span>Input your sql: </span>
+        <input name="sql_txt" id="sql_txt" type="text">
+        <input type="submit" value="Submit">
+        <button>Go</button>
+        </form>
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+            @for( col <- headers){
+                <th>@col</th>
+            }
+            </tr>
+        </thead>
+        <tbody>
+            @for( row <- content){
+                <tr>
+                    @for(col <- row){
+                        <td>@col</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

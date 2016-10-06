@@ -1,0 +1,12 @@
+@import enumerate.PackageStatus._
+@import enumerate.PackageStatus
+
+@(input_id:String,default:Option[String] = None)
+
+<select name="@input_id" id="@input_id">
+    <option @if( default.isEmpty ){SELECTED}></option>
+    @for( k <- allStatus  ){
+    <option value="@k" @if( Some(k) == default ){SELECTED} >@PackageStatus.print(k)</option>
+}
+</select>
+

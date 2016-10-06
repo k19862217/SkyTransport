@@ -1,0 +1,40 @@
+﻿#divAll { position: absolute; width: 100%; top: 0px; left: 0px;  background-color:White}
+#divPartofHead {background-color:  White; width: 100%; position: relative; top: 0px; left: 0px; z-index: 100; display: none;  }
+#divPartofTail {width: 100%; position: absolute; left: 0px; z-index: 100;display: none}
+#divTailMain{width: 100%; background-color: White; }
+#divPartofHead .top1 { width:986px; margin-left:auto; margin-right:auto; height:55px;  }
+#divPartofHead .top1 .left { float:left; margin-left:10px; font-size:18px ; margin-top:20px;  font-family:微软雅黑;color:#6c6b6b; }
+#divPartofHead .top1 .right{float:right;font-size:15px ; margin-right:20px;margin-top:20px; color:#fff;}
+#divPartofHead .top1 .right a {font-size:15px ;  font-family:微软雅黑;color:#fff;}
+#divPartofHead .top1 .right a:hover{color:#337bc7}
+#divPartofHead .topImg{ width:982px; margin:0 auto; height:375px; background-image:url('/images/v2.0/h/home-top_img6.jpg') ; clear:both ;border-left:1px solid #efefef; border-right:1px solid #efefef; position:relative;}
+#divPartofHead .startdiv{width:982px;border-left:2px solid #efefef;border-right:2px solid #efefef; margin:0 auto 0 auto; height:100px; background-color:White; overflow:hidden; border-bottom:10px solid #black}
+.startbtn{width:246px; height:68px; background-image:url('/images/v1.0/h/home_topbtn.png');  margin:0 auto ;  margin-top: 16px; cursor:pointer}
+.startbtn:hover{background-image:url('/images/v1.0/h/home_topbtn_hove.png')}
+#divTailMain .search{ background-color:#337bc7;width:986px;  height:65px; margin:0 auto; overflow:hidden}
+.search ul {  width:651px; margin:0 auto ; margin-top:20px}
+.search ul li{font-size:18px; float:left; color:White;font-family:微软雅黑; font-weight:600; line-height:30px}
+.search  .btnsearch{ font-size:15px; font-family:@Adobe 宋体 Std L; color:White;  margin-left:10px; width:97px; height:32px; background-image:url('/images/v1.0/h/home_serchbtn.png'); cursor:pointer; text-align:center; line-height:30px }
+.search  .btnsearch:hover{background-image:url('/images/v1.0/h/home_serchbtn_hover.png'); color:#fcff00}
+.footmain{ width:982px; height:503px; background-color:White; margin:0 auto; border-left:2px solid #efefef;border-right:2px solid #efefef;}
+.footmain .center{ width:956px; margin:0 auto; overflow:hidden}
+.footmain .center .foottitle{ font-size:24px; color:#6c6b6b; font-family:微软雅黑; font-weight:500; margin-top:25px; margin-left:10px;}
+.footmain .center .titlebar{ width:956px;  height:382px; margin-top:10px; background-image:url('/images/v1.0/h/home_tail_panel.png'); overflow:hidden}
+.footmain .center .titlebar ul{ width:900px; height:300px; margin: 50px auto}
+.footmain .center .titlebar ul li{ float:left}
+.footmain .center .titlebar .info{ width:250px;  height:290px ; }
+.footmain .center .titlebar .span{width: 70px;height:290px ;}
+.footmain .center .titlebar .span div{ background-image:url('/images/v1.0/h/home_arrow.png');width: 70px; height:50px; margin-top:100px}
+.footmain .center .titlebar .firststep1{margin:0 auto; width:123px; height:124px; background-image:url('/images/v1.0/h/home_step_one.png') }
+.footmain .center .titlebar .firststep2{margin:0 auto; width:123px; height:124px; background-image:url('/images/v1.0/h/home_step_two.png') }
+.footmain .center .titlebar .firststep3{margin:0 auto;  width:123px; height:124px; background-image:url('/images/v1.0/h/home_step_three.png') }
+.footmain .center .titlebar .steptitle1{color: #0684a0; font-size:14px; font-weight:bold;  font-family:@Adobe 宋体 Std L; text-align:center; padding-top:15px}
+.footmain .center .titlebar .steptitle2{color: #b94545; font-size:14px; font-weight:bold;  font-family:@Adobe 宋体 Std L; text-align:center; padding-top:15px}
+.footmain .center .titlebar .steptitle3{color: #5f9600; font-size:14px; font-weight:bold;  font-family:@Adobe 宋体 Std L; text-align:center; padding-top:15px}
+.footmain .center .titlebar .desc{ width:195px; margin:5px auto}
+.carousel-indicators{text-align: center; min-width: 20px; bottom:0px;}
+.carousel-indicators li{background-color: transparent;background: url(/images/v1.0/u/banner_indicator2.png?_=123) no-repeat;width: 10px;height: 10px;border: none;border-radius: 0;}
+.carousel-indicators .active{width: 10px;height: 10px;background-color: transparent;background-position: 0px -10px;margin: 1px;}
+/*-倒计时-*/
+.colockbox{width:300px;height:30px;overflow: hidden;  z-index:100px; position:absolute; left:395px; top:330px; }
+.colockbox span{float:left;display:block;width:46px;height:29px;line-height:29px;font-size:20px; font-weight:bold;color:#333; margin-right:21px; letter-spacing:13px; }

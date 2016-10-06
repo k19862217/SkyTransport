@@ -1,0 +1,84 @@
+@import org.joda.time.DateTime
+@import org.joda.time.format.DateTimeFormat
+@import util.Formatters._
+@(input_id:String,default_time:Option[DateTime])
+
+<span>
+Date
+<input type="text" id="datepicker_@input_id" style="width:100px">
+
+Time
+<input  id="clockpicker_@input_id" style="width:70px"
+    @if( ! default_time.isEmpty ) {
+        value="@clock_pattern.print(default_time.get)"
+    } else {
+        value=""
+    }
+>
+<span class="btn btn-primary btn-xs" onclick="setToNow_@{input_id}()">NOW</span>
+
+<input type="hidden" id="@input_id" name="@input_id">
+</span>
+
+<script type="text/javascript">
+
+    $("#datepicker_@input_id").datepicker(
+            {   inline: true,
+                dateFormat: "yy-mm-dd"
+            });
+
+    @if( ! default_time.isEmpty ){
+
+        $("#datepicker_@input_id").datepicker( "setDate", "@date_pattern.print(default_time.get)" );
+    }
+
+    $('#clockpicker_@input_id').clockpicker({
+        placement: 'bottom',
+        align: 'left',
+        autoclose: true,
+        'default': 'now'
+    });
+
+    function setToNow_@{input_id}(event){
+        var d = new Date();
+        var hours = d.getHours();
+        var minutes = d.getMinutes();
+        var date = d.getDate();
+        var month = d.getMonth();
+        var year = d.getFullYear();
+        if (month < 10) {
+            month = '0' + month;
+        }
+        if (date < 10) {
+            date = '0' + date;
+        }
+        if (hours < 10) {
+            hours = '0' + hours;
+        }
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
+
+        $("#datepicker_@input_id").val(year+"-"+month+"-"+date)
+        $("#clockpicker_@input_id").val(hours+":"+minutes)
+        change_time_@{input_id}()
+    }
+
+    function change_time_@{input_id}(){
+        var p1 = $("#datepicker_@input_id").val()
+        var p2 = $("#clockpicker_@input_id").val()
+        if ( p1 && p2 ){
+            $("#@input_id").val(p1 +" "+ p2)
+        }
+        else {
+            $("#@input_id").val("")
+        }
+    }
+
+    $("#datepicker_@input_id").change(change_time_@{input_id})
+    $("#clockpicker_@input_id").change(change_time_@{input_id})
+
+    change_time_@{input_id}()
+
+
+</script>

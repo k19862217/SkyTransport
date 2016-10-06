@@ -1,0 +1,185 @@
+/**
+ * Initial the javascript global parameters
+ */
+function updateBudget() {
+    var packageInfo = []
+    if ($('#package_select').find(':selected').attr('data-arrived_time') == "undefined" ||
+        $('#package_select').find(':selected').attr('data-goods_weight') == "undefined") {
+        packageInfo[0] = {
+            "id" : parseInt($('#package_select').find(':selected').val()),
+            "goodsName" : $('#package_select').find(':selected').attr('data-goods_name'),
+            "goodsPrice" : parseFloat($('#package_select').find(':selected').attr('data-goods_price')),
+        }
+    } else {
+        packageInfo[0] = {
+            "id" : parseInt($('#package_select').find(':selected').val()),
+            "goodsName" : $('#package_select').find(':selected').attr('data-goods_name'),
+            "goodsPrice" : parseFloat($('#package_select').find(':selected').attr('data-goods_price')),
+            "goodsWeight" : $('#package_select').find(':selected').attr('data-goods_weight'),
+            "arrivedTime" : $('#package_select').find(':selected').attr('data-arrived_time')
+        }
+    }
+    $.ajax({
+        type: "post",
+        url: "/transaction/getBudget",
+        dataType: "json",
+        contentType:'application/json',
+        async: false,
+        data: JSON.stringify({
+        	"packageInfo": packageInfo,
+        	"serviceInfo":{
+        		"combine":$('#combine_checkbox').is(":checked"),
+        		"insurance":$('#insurance_checkbox').is(":checked"),
+        		"check":$('#check_checkbox').is(":checked"),
+        		"firm":$('#firm_checkbox').is(":checked"),
+        		"sendMethod":$('#sendMethod_checkbox').val()
+        	}
+        }),
+        success: function (data) {
+        	$('#deliver_cost').text(data["Result"]["deliveryCost"] + " 日元");
+        	$('#operation_cost').text(data["Result"]["operationCost"] + " 日元");
+        	$('#keep_cost').text(data["Result"]["keepingCost"] + " 日元");
+        	$('#insurance_cost').text(data["Result"]["insuranceCost"] + " 日元");
+        	$('#total_cost').text(data["Result"]["totalCost"] + " 日元");
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            sweetAlert('错误', '取得交易失败！', 'error');
+        }
+    });
+}
+
+function updateAddressList() {
+    $.ajax({
+        type: "post",
+        url: "/myAddress/getList",
+        dataType: "json",
+        contentType:'application/json',
+        data: JSON.stringify({"jtStartIndex" :0, "jtPageSize" :0}),
+        success: function (data) {
+            if (data.Result != 'OK') {
+                return;
+            }
+            options = data.Records;
+            $('#address_id').empty();
+            $.each(options, function(id, value) {
+                $('#address_id').append('<option value = ' + value.key + ' >' + value.value + '</option>');
+            });
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            sweetAlert('错误', '取得地址信息失败！', 'error');
+        }
+    });
+}
+
+function getUnSubmitList() {
+    $.ajax({
+        type: "post",
+        url: "/myPackage/get",
+        dataType: "json",
+        contentType:'application/json',
+        data: JSON.stringify({"jtStartIndex" :0, "jtPageSize" :999, "packageType" : "0,1"}),
+        success: function (data) {
+            if (data.Result != 'OK') {
+                return;
+            }
+            options = data.Records;
+            $('#package_select').empty();
+            $.each(options, function(e) {
+                if (this.status == "0")
+                    $('#package_select').append(
+                        '<option value = ' + this.id +
+                        ' data-goods_name = ' + this.goodsName +
+                        ' data-goods_price = ' + this.goodsPrice +
+                        '> (*预约发送*)' +
+                            '商品名: ' + this.goodsName + ' - ' +
+                            '商品价格: ' + this.goodsPrice+ ' - ' +
+                            '商品数量: ' + this.goodsCount +
+                            ' </option>');
+                else
+                        $('#package_select').append(
+                        '<option value = ' + this.id +
+                        ' data-goods_name = ' + this.goodsName +
+                        ' data-goods_price =  ' + this.goodsPrice +
+                        ' data-goods_weight = '  + this.goodsWeight +
+                        ' data-arrived_time = "'  + this.arrivedTime + '"' +
+                         '>' +
+                            '商品名: ' + this.goodsName + ' - ' +
+                            '商品价格: ' + this.goodsPrice+ ' - ' +
+                            '商品数量: ' + this.goodsCount +
+                        '</option>');
+            });
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            sweetAlert('错误', '取得包裹信息失败！', 'error');
+        }
+    });
+}
+
+/**
+ * Initial the javascript global parameters
+ */
+function submitBudget() {
+    var packageInfo = []
+        if ($('#package_select').find(':selected').attr('data-arrived_time') == "undefined" ||
+        $('#package_select').find(':selected').attr('data-goods_weight') == "undefined") {
+        packageInfo[0] = {
+            "id" : parseInt($(package_select).find(':selected').val()),
+            "goodsName" : $(package_select).find(':selected').attr('data-goods_name'),
+            "goodsPrice" : parseFloat($(package_select).find(':selected').attr('data-goods_price')),
+        }
+    } else {
+        packageInfo[0] = {
+            "id" : parseInt($(package_select).find(':selected').val()),
+            "goodsName" : $(package_select).find(':selected').attr('data-goods_name'),
+            "goodsPrice" : parseFloat($(package_select).find(':selected').attr('data-goods_price')),
+            "goodsWeight" : $(package_select).find(':selected').attr('data-goods_weight'),
+            "arrivedTime" : $(package_select).find(':selected').attr('data-arrived_time')
+        }
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/transaction/create",
+        dataType: "json",
+        contentType:'application/json',
+        async: false,
+        data: JSON.stringify({
+        	"packageInfo":packageInfo,
+        	"serviceInfo":{
+        		"combine":$('#combine_checkbox').is(":checked"),
+        		"insurance":$('#insurance_checkbox').is(":checked"),
+        		"check":$('#check_checkbox').is(":checked"),
+        		"firm":$('#firm_checkbox').is(":checked"),
+        		"sendMethod":$('#sendMethod_checkbox').val()
+        	},
+            "addressId":$('#address_id').val(),
+        }),
+        success: function (data) {
+            sweetAlert('操作成功', '提交发货成功！', 'success');
+            getUnSubmitList();
+            updateBudget();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            sweetAlert('操作失败', '提交发货失败！', 'error');
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('#add_address_btn').click(function(e){
+        e.preventDefault();
+        $('#add_address_form').modal('show');
+    });
+
+    $('#add_address_form').on('hidden.bs.modal', function () {
+        updateAddressList();
+    });
+
+    $('#package_select').change(function(){
+        updateBudget();
+    });
+
+    updateAddressList();
+    getUnSubmitList();
+    updateBudget();
+});

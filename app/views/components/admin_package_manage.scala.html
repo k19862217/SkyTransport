@@ -1,0 +1,162 @@
+@import util.Formatters._
+@import enumerate.PackageStatus._
+
+
+@(   package_seq:Seq[dao.Types.Type_package]   )
+    <div class="box">
+        <style>
+            .btn_status{
+            }
+            .btn_status.choosen{
+                background-color: lightgreen;
+                font: bold ;
+            }
+        </style>
+
+        @draw_btn(id:Int,status:String) = {
+            @for( i <- enumerate.PackageStatus.allStatus) {
+                @defining( if (i == status) "btn_status choosen" else "btn_status" ) { css =>
+                <button onclick="change_state(this,@id,@i)" class="@css" >
+                    @{enumerate.PackageStatus.print(i)}
+                </button>
+                }
+            }
+        }
+
+        @draw_weight(id:Int,goodsWeight:Double) = {
+
+        }
+
+        <script lang="javascript">
+
+            function refresh_row_button_style(btn){
+                var btns = $(btn).siblings()
+                $(btns).removeClass('btn_status choosen')
+                $(btn).addClass('btn_status choosen')
+            }
+
+            function change_state(btn,package_id,new_status){
+
+                if (new_status == @{reversed_mapping("入库未提交")}
+                      &&  $("#span_"+package_id+"_weight").text() == "" ){
+                    alert("请先称重!")
+                    return
+                }
+
+                $.ajax({
+                    url:"/admin/change_package_status/" + package_id + "/" + new_status,
+                    method:"POST"
+                }).done(function(response){
+                    console.log(response)
+
+                    if (response.result == "OK"){
+                        var t = response.packageInfo.arrivedTime
+                        console.log("arrivedTime",t)
+                        console.log("packageInfo",response)
+
+                        $("#"+package_id+"_arrivedTime").text(t) // update display time
+                       refresh_row_button_style(btn)
+                    }
+                    else{
+                        console.log(response.msg)
+                        alert("ERROR")
+                    }
+                })
+
+            }
+
+
+            function change_goods_weight(package_id){
+                var goodsWeight = $("#txt_"+package_id+"_weight").val()
+                $.ajax({
+                    url:"/admin/change_package_weight/" + package_id + "/" + goodsWeight,
+                    method:"POST"
+                }).done(function(response){
+                    console.log(response)
+
+                    if (response.result == "OK"){
+                       var t = response.packageInfo.goodsWeight
+                       $("#span_"+package_id+"_weight").text(t) // update display time
+                    }
+                    else{
+                        alert("ERROR")
+                    }
+                })
+
+            }
+
+        </script>
+
+        <div class="box-body">
+            <table border="1">
+                <thead>
+                    <th>User Info</th>
+                    <th>Package ID</th>
+                    <th>Goods Name</th>
+                    <th>Goods Price</th>
+                    <th>Goods Count</th>
+                    <th>Forecast Time</th>
+                    <th>Arrival Time</th>
+                    <th>Goods Weight</th>
+                    <th>Transaction URL</th>
+                </thead>
+                @for( i <- package_seq ){
+                @i match {
+                        case (user,package_info,transaction) => {
+                        <tr>
+                            <td>
+                                @if( user.isDefined ){
+                                <a href="/admin/view_user/@{user.get.id}">
+                                    @user.get.name  @user.get.email
+                                </a>
+                                } else {
+                                NO User Information
+                                }
+                            </td>
+
+                            <td>
+                                <a href="/admin/detailed/package/@{package_info.id}">
+                                    @package_info.id
+                                </a>
+                            </td>
+                            <td>@package_info.goodsName </td>
+                            <td>@package_info.goodsPrice </td>
+                            <td>@package_info.goodsCount </td>
+
+                            <td>@package_info.forecastTime.map(printDateTime) </td>
+                            <td id="@{package_info.id}_arrivedTime">
+                                @package_info.arrivedTime.map(printDateTime)
+                            </td>
+
+                            <td>
+                                Current Weight: <span id="span_@{package_info.id}_weight">@package_info.goodsWeight</span> <br/>
+                                <input type="text" id="txt_@{package_info.id}_weight">
+                                <button onclick="change_goods_weight(@{package_info.id})">Change Weight</button>
+                            </td>
+
+                            <td>
+                                @if( transaction.isDefined ) {
+                                    <a href="/admin/detailed/transaction/@{transaction.get.id}">
+                                        View Transaction @{transaction.get.id}
+                                    </a>
+                                } else {
+                                    NO Transaction Infomation
+                                }
+                            </td>
+                        </tr>
+                        <tr style="background-color: rgb(255,240,240)">
+                            <td colspan="3"><span style="font-weight: bold; padding-right: 10px;">订单:</span><span>@package_info.orderNumber</span> </td>
+                            <td colspan="7">
+                            @defining(package_info.status.getOrElse("-1") ){ my_status =>
+                                @draw_btn( package_info.id , my_status )
+                            }
+                            </td>
+                        </tr>
+                            <tr style="height: 10px;"></tr>
+                    }
+                }
+
+                }
+            </table>
+        </div>
+    </div>

@@ -1,0 +1,528 @@
+@import views.html._
+@(package_id: Option[Int])(implicit session:play.api.mvc.Session)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    @templates.include()
+    <link href="/assets/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/jTable/themes/lightcolor/blue/jtable.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/validationEngine.jquery.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <script src="/assets/js/ThirdPart/jquery/jquery-ui.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/assets/js/ThirdPart/jquery/jquery.validationEngine-zh_CN.js"></script>
+    <script type="text/javascript" src="/assets/js/ThirdPart/jquery/jquery.validationEngine.js"></script>
+    <script src="/assets/js/ThirdPart/jquery/jquery.jtable.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/validator.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/moment.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/sweetalert.min.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/bootstrap/bootstrap-editable.min.js" type="text/javascript"></script>
+    <style>
+        .modal-header {
+        padding:9px 15px;
+        border-bottom:1px solid #eee;
+        background-color: #3c8dbc;
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-top-right-radius: 5px;
+        -moz-border-radius-topleft: 5px;
+        -moz-border-radius-topright: 5px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        }
+        .vertical-center {
+        min-height: 100%;  /* Fallback for vh unit */
+        /* You might also want to use
+        'height' property instead.
+
+        Note that for percentage values of
+        'height' or 'min-height' properties,
+        the 'height' of the parent element
+        should be specified explicitly.
+
+        In this case the parent of '.vertical-center'
+        is the <body> element */
+
+/* Make it a flex container */
+display: -webkit-box;
+display: -moz-box;
+display: -ms-flexbox;
+display: -webkit-flex;
+display: flex;
+
+/* Align the bootstrap's container vertically */
+-webkit-box-align : center;
+-webkit-align-items : center;
+-moz-box-align : center;
+-ms-flex-align : center;
+align-items : center;
+
+/* In legacy web browsers such as Firefox 9
+we need to specify the width of the flex container */
+width: 100%;
+
+/* Also 'margin: 0 auto' doesn't have any effect on flex items in such web browsers
+hence the bootstrap's container won't be aligned to the center anymore.
+
+Therefore, we should use the following declarations to get it centered again */
+-webkit-box-pack : center;
+-moz-box-pack : center;
+-ms-flex-pack : center;
+-webkit-justify-content : center;
+justify-content : center;
+}
+
+.jumbotron.vertical-center {
+margin-bottom: 0; /* Remove the default bottom margin of .jumbotron */
+background-color: #fff;
+}
+
+#custom-search-input{
+padding: 3px;
+border: solid 1px #E4E4E4;
+border-radius: 6px;
+background-color: #fff;
+}
+
+#custom-search-input input{
+border: 0;
+box-shadow: none;
+}
+
+#custom-search-input button{
+margin: 2px 0 0 0;
+background: none;
+box-shadow: none;
+border: 0;
+color: #666666;
+padding: 0 8px 0 10px;
+border-left: solid 1px #ccc;
+}
+
+#custom-search-input button:hover{
+border: 0;
+box-shadow: none;
+border-left: solid 1px #ccc;
+}
+
+#custom-search-input .glyphicon-search{
+font-size: 23px;
+}
+
+</style>
+</head>
+
+<body class="sidebar-mini skin-black-light">
+<div class="wrapper">
+    @templates.header()
+    @templates.sidebar()
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                包裹管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active"> 包裹管理</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="filtering">
+                                <div id="custom-search-input">
+                                    <div class="input-group col-md-12">
+                                        <input type="text" class="form-control" placeholder="包裹ID/物流单号/物品名称/预报时间(年/月/日)" id="search_text" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info" type="button" id="search_btn">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="PackageTableContainer"></div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+    <div class="modal fade" id="add_forecast_package" tabindex="-1" role="dialog" aria-labelledby="添加包裹">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form role="form" data-toggle="validator" id="add-forecast-package" class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title" id="package_page_label">添加预报包裹</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-4">
+                            <div class="alert alert-warning alert-dismissable content">
+                                <h4><i class="icon fa fa-warning"></i> 注意!</h4>
+                                1、物品明细将作为邮寄时海关申报信息使用，请务必保证真实、准确，否则造成海关罚款、罚没、退货等后果自负。<br>
+                                2、物品名称请采用寄达地文字或英文准确填写。比如：寄往中国内地的物品名称用中文或英文填写，寄往中国香港的物品名称用繁体或英文填写。价格统一填写日元价格。
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group has-feedback">
+                                <label class="control-label col-xs-4">选择入库仓库</label>
+                                <div class="col-xs-8">
+                                    <select class="form-control" id="warehouse">
+                                        <option value="1">日本东京仓库</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label col-xs-4">日本快递单号</label>
+                                <div class="col-xs-8">
+                                    <input class="form-control" placeholder="物流号码" id="order_number" pattern="[0-9]+" data-error="请填写正确的快递单号" required />
+                                    <div class="help-block with-errors col-xs-12"></div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label col-xs-4">物品名称</label>
+                                <div class="col-xs-8">
+                                    <input class="form-control" placeholder="电脑，相机..." id="goods_name" data-error="请填写正确的物品名称" required/>
+                                    <div class="help-block with-errors col-xs-12"></div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label col-xs-4">物品单价</label>
+                                <div class="col-xs-8">
+                                    <input class="form-control" placeholder="日元" id="goods_price" pattern="[0-9]+" data-error="请填写正确的物品单价" required/>
+                                    <div class="help-block with-errors col-xs-12"></div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label col-xs-4">物品数量</label>
+                                <div class="col-xs-8">
+                                    <input class="form-control" placeholder="数量" id="goods_count" pattern="[0-9]+" data-error="请填写正确的物品数量" required/>
+                                    <div class="help-block with-errors col-xs-12"></div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label col-xs-4">其他描述</label>
+                                <div class="col-xs-8">
+                                    <textarea class="form-control" placeholder="其他" id="package_description" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="confirmed">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="change_package" tabindex="-1" role="dialog" aria-labelledby="更改包裹">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form role="form" data-toggle="validator" id="forecast_package_change_form" class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title" id="package_change_label">修改预报包裹</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-3">包裹ID</label>
+                            <div class="col-xs-8">
+                                <input class="form-control" id="package_id_change_form" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-3">选择入库仓库</label>
+                            <div class="col-xs-8">
+                                <select class="form-control" id="warehouse_change_form">
+                                    <option value="1">日本东京仓库</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-3">日本快递单号</label>
+                            <div class="col-xs-8">
+                                <input class="form-control" placeholder="物流号码" id="order_number_change_form" pattern="[0-9]+" data-error="请填写快递单号" required />
+                                <div class="help-block with-errors col-xs-12"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-3">物品名称</label>
+                            <div class="col-xs-8">
+                                <input class="form-control" placeholder="电脑，相机..." id="goods_name_change_form" data-error="请填写正确的物品名称" required/>
+                                <div class="help-block with-errors col-xs-12"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-3">物品单价</label>
+                            <div class="col-xs-8">
+                                <input class="form-control" placeholder="日元" id="goods_price_change_form" pattern="[0-9]+"  data-error="请填写正确的物品单价" required/>
+                                <div class="help-block with-errors col-xs-12"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-3">物品数量</label>
+                            <div class="col-xs-8">
+                                <input class="form-control" placeholder="数量" id="goods_count_change_form" pattern="[0-9]+"  data-error="请填写正确的物品数量" required/>
+                                <div class="help-block with-errors col-xs-12"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="change_confirmed">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="send_package" tabindex="-1" role="dialog" aria-labelledby="发送包裹" >
+        <div class="modal-dialog" role="document" style="width: 90%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title">提交发货</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <span class="error" id="send-error-message" style="color:red; font-size:14px; display:block; text-align:center;"></span>
+                                <nav class="navbar navbar-default">
+                                    <a class="navbar-brand" href="#">第一步：确认物品</a>
+                                </nav>
+                                <div class="form-group has-feedback">
+                                    <table class="table table-striped table-bordered" id="send_packages">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>物品名称</th>
+                                            <th>物品重量(kg)</th>
+                                            <th>入库时间</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <nav class="navbar navbar-default">
+                                    <a class="navbar-brand" href="#">第二步：选择服务及发送方式</a>
+                                </nav>
+                                <div class="form-group has-feedback">
+                                    <table>
+                                        <tbody>
+                                        <tr>
+                                            <td class="col-md-4 text-center">
+                                                <div class="checkbox"><label><input type="checkbox" id="insurance_checkbox" onclick="updateBudget();"> 保险</label></div>
+                                            </td>
+                                            <td class="col-md-4 text-center">
+                                                <div class="checkbox"><label><input type="checkbox" id="check_checkbox" onclick="updateBudget();"> 物品检点</label></div>
+                                            </td>
+                                            <td class="col-md-4 text-center">
+                                                <div class="checkbox"><label><input type="checkbox" id="firm_checkbox" onclick="updateBudget();"> 加固</label></div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <select class="form-control" id="sendMethod_checkbox" onchange="updateBudget();">
+                                        <option value="t1">EMS原箱线</option>
+                                        <option value="t2">EMS特快线</option>
+                                        <option value="t3">SAL空陆联运</option>
+                                        <option value="t4">海运（船运）</option>
+                                        <option value="t5">AIR航空线</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <nav class="navbar navbar-default">
+                                    <a class="navbar-brand" href="#">第三步：确认费用</a>
+                                </nav>
+                                <div class="form-group has-feedback">
+                                    <ul class="list-group">
+                                        <li class="list-group-item"><span class="badge" id="deliver_cost">0.00 日元</span> 运费</li>
+                                        <li class="list-group-item"><span class="badge" id="operation_cost">0.00 日元</span> 手续费</li>
+                                        <li class="list-group-item"><span class="badge" id="keep_cost">0.00 日元</span> 保管费</li>
+                                        <li class="list-group-item"><span class="badge" id="insurance_cost">0.00 日元</span> 保险</li>
+                                        <li class="nav-divider"></li>
+                                        <li class="list-group-item"><span class="badge" id="total_cost">0.00 日元</span> <h5>合计</h5></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <nav class="navbar navbar-default">
+                                    <a class="navbar-brand" href="#">第四步：选择收货地址</a>
+                                </nav>
+                                <div class="form-group has-feedback">
+                                    <div class="col-md-10">
+                                        <select class="form-control" id="address_id"> </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a href="/myAddress" class="btn btn-default addButton"><i class="fa fa-plus"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" id="add_budget">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="divide_package" tabindex="-1" role="dialog" aria-labelledby="分割包裹">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div role="form" data-toggle="validator" id="divide_package_form" class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title">分割包裹</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-2"> 原包裹ID</label>
+                            <div class="col-xs-10">
+                                <input class="form-control" id="divide_package_origin_id" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-2"> 原包裹内容</label>
+                            <div class="col-xs-10">
+                                <input class="form-control" id="divide_package_origin_content" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-2"> 分割方式</label>
+                                <div class="col-xs-10">
+                                    <div id="divide_package_area">
+                                        <table id="divide_package_table_0" class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th> 包裹#1</th>
+                                                    <th> 物品名称</th>
+                                                    <th> 物品个数</th>
+                                                    <th> 物品价格</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="glyphicon glyphicon-minus" align="center" onclick="this.parentNode.remove();"></td>
+                                                    <td><span class="edit"></span></td>
+                                                    <td><span class="edit"></span></td>
+                                                    <td><span class="edit"></span></td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <a class="btn btn-link pull-right" onclick="add_divide_package_table_row(this.parentNode.parentNode.parentNode.parentNode);"> 追加物品</a>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <a id="add_divide_package_table" class="btn btn-default pull-left"> 追加包裹</a>
+                                    <a id='delete_divide_package_table' class="pull-right btn btn-default"> 删除包裹</a>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="divide_confirmed">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var divide_table_count = 1;
+    $(document).ready(function() {
+        $('#add_divide_package_table').click(function(e){
+            if (divide_table_count >= 5) return;
+            var divide_package_table =
+            '<table id="divide_package_table_' + divide_table_count + '" class="table table-striped table-bordered">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th> 包裹#' + (divide_table_count + 1) + '</th>' +
+                        '<th> 物品名称</th>' +
+                        '<th> 物品个数</th>' +
+                        '<th> 物品价格</th>' +
+                    '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                    '<tr>' +
+                        '<td class="glyphicon glyphicon-minus" align="center" onclick="this.parentNode.remove();"></td>' +
+                        '<td><span class="edit"></span></td>' +
+                        '<td><span class="edit"></span></td>' +
+                        '<td><span class="edit"></span></td>' +
+                    '</tr>' +
+                '</tbody>' +
+                '<tfoot>' +
+                    '<tr>' +
+                        '<td colspan="4">' +
+                            '<a class="btn btn-link pull-right" onclick="add_divide_package_table_row(this.parentNode.parentNode.parentNode.parentNode);"> 追加物品</a>' +
+                        '</td>' +
+                    '</tr>' +
+                '</tfoot>' +
+            '</table>';
+            $('#divide_package_area').append(divide_package_table);
+            divide_table_count++;
+            setAllEditable();
+        });
+
+        $('#delete_divide_package_table').click(function(e){
+            if(divide_table_count > 1) {
+                $('#divide_package_table_' + (divide_table_count - 1)).remove();
+                divide_table_count--;
+            }
+        });
+
+        setAllEditable();
+    })
+
+    function add_divide_package_table_row(tab) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+        '<tr>' +
+            '<td class="glyphicon glyphicon-minus" align="center" onclick="this.parentNode.remove();"></td>' +
+            '<td><span class="edit"></span></td>' +
+            '<td><span class="edit"></span></td>' +
+            '<td><span class="edit"></span></td>' +
+        '</tr>'
+        console.log(tab);
+        tab.getElementsByTagName('tbody')[0].appendChild(tr);
+        setAllEditable();
+    }
+
+    function setAllEditable() {
+        // setting defaults for the editable
+        $.fn.editable.defaults.mode = 'inline';
+        $.fn.editable.defaults.showbuttons = false;
+        $.fn.editable.defaults.url = '/post';
+        $.fn.editable.defaults.type = 'text';
+
+        // make all items having class 'edit' editable
+        $('.edit').editable();
+    }
+</script>
+<script type="text/javascript">
+    @javascript.manage_package_js()
+</script>

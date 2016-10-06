@@ -1,0 +1,48 @@
+@import models._
+@(p:PackageInfo)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        @templates.include()
+    <meta charset="UTF-8">
+    <title>Title</title>
+    </head>
+    <body class="skin-blue layout-boxed">
+        @templates.header()
+        @adminviews.admin_sidebar()
+        <div class="wrapper">
+            <div class="content-wrapper">
+
+                <section class="content-header">
+                    <h1>
+                        包裹详细
+                    </h1>
+                </section>
+
+                    <!-- Main content -->
+                <section class="content">
+                    <p class="lead">包裹详细信息</p>
+                    <div class="table-responsive">
+                        <form method="POST">
+                            @components.admin_package_detailed(p,false)
+                            <input type="submit" value="update">
+                        </form>
+                        <div> <button id="btn_divide_package">拆分包裹</button><input type="text" id="divide_package_num" width="30px;">个 </div>
+
+                        <script type="text/javascript">
+                            $("#btn_divide_package").click(function(){
+                                        var num = $("#divide_package_num").val()
+                                        if (num){
+                                            window.location.href = "/admin/divide_package/@{p.id}/"+num
+                                        }
+                                    }
+                            )
+                        </script>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </body>
+</html>

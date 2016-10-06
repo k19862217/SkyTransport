@@ -1,0 +1,209 @@
+@import views.html._
+@()(implicit session:play.api.mvc.Session)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    @templates.include()
+    <link href="/assets/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/menu.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/jTable/themes/lightcolor/blue/jtable.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/validationEngine.jquery.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <script src="/assets/js/ThirdPart/jquery/jquery-ui.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/assets/js/ThirdPart/jquery/jquery.validationEngine-zh_CN.js"></script>
+    <script type="text/javascript" src="/assets/js/ThirdPart/jquery/jquery.validationEngine.js"></script>
+    <script src="/assets/js/ThirdPart/jquery/jquery.jtable.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/validator.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/moment.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/sweetalert.min.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/bootstrap/bootstrap-editable.min.js" type="text/javascript"></script>
+    <style>
+</style>
+</head>
+
+<body class="sidebar-mini skin-black-light">
+<div class="wrapper">
+    @templates.header()
+    @templates.sidebar()
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                添加预报
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active"> 我的包裹</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="filtering">
+                                <div id="custom-search-input">
+                                    <div class="input-group col-md-12">
+                                        <input type="text" class="form-control" placeholder="包裹ID/物流单号/物品名称/预报时间(年/月/日)" id="search_text" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info" type="button" id="search_btn">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="PackageTableContainer"></div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+    <div class="modal fade" id="divide_package" tabindex="-1" role="dialog" aria-labelledby="分割包裹">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div role="form" data-toggle="validator" id="divide_package_form" class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title">分割包裹</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-2"> 原包裹ID</label>
+                            <div class="col-xs-10">
+                                <input class="form-control" id="divide_package_origin_id" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-2"> 原包裹内容</label>
+                            <div class="col-xs-10">
+                                <input class="form-control" id="divide_package_origin_content" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-2"> 分割方式</label>
+                            <div class="col-xs-10">
+                                <div id="divide_package_area">
+                                    <table id="divide_package_table_0" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th> 包裹#1</th>
+                                            <th> 物品名称</th>
+                                            <th> 物品个数</th>
+                                            <th> 物品价格</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class="glyphicon glyphicon-minus" align="center" onclick="this.parentNode.remove();"></td>
+                                            <td><span class="edit"></span></td>
+                                            <td><span class="edit"></span></td>
+                                            <td><span class="edit"></span></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="4">
+                                                <a class="btn btn-link pull-right" onclick="add_divide_package_table_row(this.parentNode.parentNode.parentNode.parentNode);"> 追加物品</a>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <a id="add_divide_package_table" class="btn btn-default pull-left"> 追加包裹</a>
+                                <a id='delete_divide_package_table' class="pull-right btn btn-default"> 删除包裹</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="divide_confirmed">提交</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var divide_table_count = 1;
+    $(document).ready(function() {
+        $('#add_divide_package_table').click(function(e){
+            if (divide_table_count >= 5) return;
+            var divide_package_table =
+            '<table id="divide_package_table_' + divide_table_count + '" class="table table-striped table-bordered">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th> 包裹#' + (divide_table_count + 1) + '</th>' +
+                        '<th> 物品名称</th>' +
+                        '<th> 物品个数</th>' +
+                        '<th> 物品价格</th>' +
+                    '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                    '<tr>' +
+                        '<td class="glyphicon glyphicon-minus" align="center" onclick="this.parentNode.remove();"></td>' +
+                        '<td><span class="edit"></span></td>' +
+                        '<td><span class="edit"></span></td>' +
+                        '<td><span class="edit"></span></td>' +
+                    '</tr>' +
+                '</tbody>' +
+                '<tfoot>' +
+                    '<tr>' +
+                        '<td colspan="4">' +
+                            '<a class="btn btn-link pull-right" onclick="add_divide_package_table_row(this.parentNode.parentNode.parentNode.parentNode);"> 追加物品</a>' +
+                        '</td>' +
+                    '</tr>' +
+                '</tfoot>' +
+            '</table>';
+            $('#divide_package_area').append(divide_package_table);
+            divide_table_count++;
+            setAllEditable();
+        });
+
+        $('#delete_divide_package_table').click(function(e){
+            if(divide_table_count > 1) {
+                $('#divide_package_table_' + (divide_table_count - 1)).remove();
+                divide_table_count--;
+            }
+        });
+
+        setAllEditable();
+    })
+
+    function add_divide_package_table_row(tab) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+        '<tr>' +
+            '<td class="glyphicon glyphicon-minus" align="center" onclick="this.parentNode.remove();"></td>' +
+            '<td><span class="edit"></span></td>' +
+            '<td><span class="edit"></span></td>' +
+            '<td><span class="edit"></span></td>' +
+        '</tr>'
+        console.log(tab);
+        tab.getElementsByTagName('tbody')[0].appendChild(tr);
+        setAllEditable();
+    }
+
+    function setAllEditable() {
+        // setting defaults for the editable
+        $.fn.editable.defaults.mode = 'inline';
+        $.fn.editable.defaults.showbuttons = false;
+        $.fn.editable.defaults.url = '/post';
+        $.fn.editable.defaults.type = 'text';
+
+        // make all items having class 'edit' editable
+        $('.edit').editable();
+    }
+</script>
+<script type="text/javascript">
+    @javascript.divide_combine_package_js()
+</script>

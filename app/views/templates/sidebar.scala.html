@@ -1,0 +1,76 @@
+@()(implicit session:play.api.mvc.Session)
+<!-- Left side column. contains the sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="/assets/images/login_head.png" class="img-circle" alt="User Image" />
+            </div>
+            <div class="pull-left info">
+                <p>@session.get("user").getOrElse("未登录者!")</p>
+                <a href="#"><i class="fa text-success"></i> 欢迎来到天空转运</a>
+            </div>
+        </div>
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="treeview active">
+                <a href="/myAccount">
+                    <i class="fa fa-pie-chart"></i> <i class="fa fa-angle-left pull-right"></i>
+                    <span> 我的账户</span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/myAccount"><i class="fa fa-circle-o"></i> 账户信息</a></li>
+                </ul>
+            </li>
+            <li class="treeview active">
+                <a href="#">
+                    <i class="fa fa-dashboard"></i> <span> 我的包裹</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/myPackage/addForecast"><i class="fa fa-circle-o"></i> 包裹预报</a></li>
+                    <li><a href="/myPackage/modifyForecast"><i class="fa fa-circle-o"></i> 修改预报</a></li>
+                    <li><a href="/myPackage/divideCombinePackage"><i class="fa fa-circle-o"></i> 包裹管理</a></li>
+                </ul>
+            </li>
+            <li class="treeview active">
+                <a href="/warehouse">
+                    <i class="fa fa-files-o"></i><span> 我的订单</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/transaction/submitOrder"><i class="fa fa-circle-o"></i> 提交/预报发货</a></li>
+                    <li><a href="/myOrder"><i class="fa fa-circle-o"></i> 订单管理</a></li>
+                </ul>
+            </li>
+            <li class="treeview active">
+                <a href="/myAccount">
+                    <i class="fa fa-pie-chart"></i> <i class="fa fa-angle-left pull-right"></i>
+                    <span> 我的地址</span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/myAddress/add"><i class="fa fa-circle-o"></i> 添加地址</a></li>
+                    <li><a href="/myAddress/manage"><i class="fa fa-circle-o"></i> 地址管理</a></li>
+                </ul>
+            </li>
+            <li class="treeview active">
+                <a href="/myMessage">
+                    <i class="fa fa-envelope"></i> <span> 客服信息</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/myMessage"><i class="fa fa-circle-o"></i> 联系客服</a></li>
+                    <li><a href="/myAccount"><i class="fa fa-circle-o"></i> 申请退款</a></li>
+                    <li><a href="/myMessage"><i class="fa fa-circle-o"></i> 投诉理赔</a></li>
+                    <li><a href="/myOrder"><i class="fa fa-circle-o"></i> 网站教程</a></li>
+                    <li><a href="/myOrder"><i class="fa fa-circle-o"></i> 购物指南</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/logout">
+                    <i class="fa fa-sign-out"></i> <span>退出系统</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,99 @@
+@()(implicit session:play.api.mvc.Session)
+<form role="form" data-toggle="validator" id="add-forecast-package" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">选择国家</label>
+            <div class="col-xs-8">
+                <select class="form-control" id="country">
+                    <option value="中国">中国</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">选择省份</label>
+            <div class="col-xs-8">
+                <select class="form-control" id="Select1">
+                </select>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">选择市</label>
+            <div class="col-xs-8">
+                <select class="form-control" id="Select2">
+                </select>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">选择县/地区</label>
+            <div class="col-xs-8">
+                <select class="form-control" id="Select3">
+                </select>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">地址</label>
+            <div class="col-xs-8">
+                <input class="form-control" placeholder="XX小区XX号XX室" id="address" data-error="请填写地址信息" required/>
+                <div class="help-block with-errors col-xs-12"></div>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">收件人</label>
+            <div class="col-xs-8">
+                <input class="form-control" placeholder="收件人" id="receiver"  data-error="请填写收件人" required/>
+                <div class="help-block with-errors col-xs-12"></div>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">手机/电话</label>
+            <div class="col-xs-8">
+                <input class="form-control" placeholder="手机/电话" id="phone" type="number" data-error="请填写收件人的联系方式" required/>
+                <div class="help-block with-errors col-xs-12"></div>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-4">邮政编码</label>
+            <div class="col-xs-8">
+                <input class="form-control" placeholder="邮政编码" id="postcode" type="number" data-error="请填写邮编" required/>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" class="btn btn-primary" id="add_address_confirmed">提交</button>
+    </div>
+</form>
+<script type="text/javascript">
+$(document).ready(function() {
+    addressInit('Select1', 'Select2', 'Select3');
+    $('#add_address_confirmed').click(function(e){
+    	e.preventDefault();
+
+        var address_info = {
+        	'country': $('#country').val(),
+        	'city': $('#Select1').val() + "-" + $('#Select2').val() + "-" + $('#Select3').val() ,
+        	'address': $('#address').val(),
+        	'receiver': $('#receiver').val(),
+        	'phone': $('#phone').val(),
+        	'postcode':$('#postcode').val()
+        }
+
+    	$.ajax({
+        	type: "post",
+        	url: "/myAddress/add",
+        	dataType: "json",
+        	contentType:'application/json',
+        	async: false,
+        	data: JSON.stringify(address_info),
+        	success: function (data) {
+            	sweetAlert('操作成功', "创建地址成功", 'success');
+        		$('#address_add').modal('toggle');
+           		$('#AddressTableContainer').jtable('reload');
+        	},
+        	error: function (XMLHttpRequest, textStatus, errorThrown) {
+            	sweetAlert('错误', JSON.parse(XMLHttpRequest.responseText).ErrorMessage, 'error');
+        	}
+    	});
+    });
+})
+</script>

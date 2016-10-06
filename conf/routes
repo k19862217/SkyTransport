@@ -1,0 +1,86 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Auth
+GET    /                            @controllers.MyPackageController.myPackage(package_id: Option[Int])
+
+# Register page
+GET     /register                    @controllers.RegisterController.register
+POST    /register/:executeType       @controllers.RegisterController.execute(executeType: String)
+
+# Login page
+GET     /login                       @controllers.LoginController.login
+POST    /login                       @controllers.LoginController.execute
+
+# Logout page
+GET     /logout                       @controllers.LogoutController.execute
+
+# MyPackage page
+GET     /myPackage                   @controllers.MyPackageController.myPackage(package_id: Option[Int])
+GET     /myPackage/:renderPage       @controllers.MyPackageController.render(renderPage: String)
+GET     /myPackageDetail/:packageId  @controllers.MyPackageController.myPackageDetail(packageId: Int)
+POST    /myPackage/:executeType      @controllers.MyPackageController.execute(executeType: String)
+
+# Order page
+GET    /myOrder                      @controllers.MyOrderController.myOrder
+GET    /myOrderDetail/:orderId       @controllers.MyOrderController.myOrderDetail(orderId: Int)
+POST   /myOrder/:executeType         @controllers.MyOrderController.execute(executeType: String)
+
+# Address page
+GET    /myAddress                    @controllers.MyAddressController.myAddress
+GET    /myAddress/:pageName          @controllers.MyAddressController.render(pageName: String)
+POST   /myAddress/:executeType       @controllers.MyAddressController.execute(executeType: String)
+
+# Warehouse page
+GET    /warehouse                    @controllers.WarehouseController.warehouse
+
+# My account page
+GET    /myAccount                    @controllers.MyAccountController.myAccount
+POST   /myAccount/:executeType       @controllers.MyAccountController.execute(executeType: String)
+
+#Message
+GET    /myMessage                    @controllers.MessageController.myMessage
+POST   /myMessage/:executeType       @controllers.MessageController.execute(executeType: String)
+
+# Transaction page
+GET     /transaction/:renderPage     @controllers.TransactionController.render(renderPage: String)
+POST    /transaction/:executeType    @controllers.TransactionController.execute(executeType: String)
+
+#Message
+POST   /operation/:executeType       @controllers.OperationController.execute(executeType: String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+
+# =============== Admin ==============
+GET     /admin        @controllers.admin.AdminMainController.index
+
+
+GET     /temp        @controllers.TempviewController.index
+
+
+GET     /admin/sqlconsole        @controllers.admin.SQLConsoleController.run_sql
+POST     /admin/sqlconsole        @controllers.admin.SQLConsoleController.run_sql
+
+GET     /admin/view_package      @controllers.admin.PackageManagerController.default_search
+POST     /admin/view_package      @controllers.admin.PackageManagerController.search
+
+POST     /admin/change_package_weight/:id/:goodsWeight      @controllers.admin.PackageManagerController.change_package_weight(id:Int,goodsWeight:Double)
+POST     /admin/change_package_status/:id/:status      @controllers.admin.PackageManagerController.change_package_status(id:Int,status:String)
+POST     /admin/change_transaction_status/:id/:status      @controllers.admin.TransactionManagerController.change_transaction_status(id:Int,status:Int)
+
+
+GET     /admin/view_transaction      @controllers.admin.TransactionManagerController.default_search
+POST     /admin/view_transaction      @controllers.admin.TransactionManagerController.search
+
+GET     /admin/detailed/package/:id      @controllers.admin.DetailedController.detailed_package(id:Int)
+GET     /admin/detailed/transaction/:id      @controllers.admin.DetailedController.detailed_transaction(id:Int)
+
+POST     /admin/detailed/package/:id      @controllers.admin.DetailedController.update_package(id:Int)
+POST     /admin/detailed/transaction/:id      @controllers.admin.DetailedController.update_transaction(id:Int)
+
+GET     /admin/divide_package/:id/:num      @controllers.admin.DividePackageController.divide(num:Int,id:Int)
+POST     /admin/divide_package/:id/:num      @controllers.admin.DividePackageController.insert_num_package(num:Int,id:Int)
+

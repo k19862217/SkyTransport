@@ -1,0 +1,146 @@
+@import views.html._
+@()(implicit session:play.api.mvc.Session)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    @templates.include()
+    <link href="/assets/css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/menu.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/jTable/themes/lightcolor/blue/jtable.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/validationEngine.jquery.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <script src="/assets/js/ThirdPart/jquery/jquery-ui.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/assets/js/ThirdPart/jquery/jquery.validationEngine-zh_CN.js"></script>
+    <script type="text/javascript" src="/assets/js/ThirdPart/jquery/jquery.validationEngine.js"></script>
+    <script src="/assets/js/ZhuanYun/jsAddress.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/jquery/jquery.jtable.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/validator.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/moment.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/sweetalert.min.js" type="text/javascript"></script>
+    <script src="/assets/js/ThirdPart/bootstrap/bootstrap-editable.min.js" type="text/javascript"></script>
+</head>
+
+
+
+<body class="sidebar-mini skin-black-light">
+<div class="wrapper">
+    @templates.header()
+    @templates.sidebar()
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                添加预报
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active"> 我的包裹</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <form>
+                                <div>
+                                    <span class="error" id="send-error-message" style="color:red; font-size:14px; display:block; text-align:center;"></span>
+                                    <nav class="navbar navbar-default">
+                                        <a class="navbar-brand" href="#">第一步：确认物品</a>
+                                    </nav>
+                                    <div class="form-group has-feedback">
+                                        <select class="form-control" id="package_select"> </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <nav class="navbar navbar-default">
+                                        <a class="navbar-brand" href="#">第二步：选择服务及发送方式</a>
+                                    </nav>
+                                    <div class="form-group has-feedback">
+                                        <table>
+                                            <tbody>
+                                            <tr>
+                                                <td class="col-md-4 text-center">
+                                                    <div class="checkbox"><label><input type="checkbox" id="insurance_checkbox" onclick="updateBudget();"> 保险</label></div>
+                                                </td>
+                                                <td class="col-md-4 text-center">
+                                                    <div class="checkbox"><label><input type="checkbox" id="check_checkbox" onclick="updateBudget();"> 物品检点</label></div>
+                                                </td>
+                                                <td class="col-md-4 text-center">
+                                                    <div class="checkbox"><label><input type="checkbox" id="firm_checkbox" onclick="updateBudget();"> 加固</label></div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-group has-feedback">
+                                        <select class="form-control" id="sendMethod_checkbox" onchange="updateBudget();">
+                                            <option value="t1">EMS原箱线</option>
+                                            <option value="t2">EMS特快线</option>
+                                            <option value="t3">SAL空陆联运</option>
+                                            <option value="t4">海运（船运）</option>
+                                            <option value="t5">AIR航空线</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <nav class="navbar navbar-default">
+                                        <a class="navbar-brand" href="#">第三步：确认费用<span class="small"><font color="red">(预约发送时送料将在入库称重后根据重量时自动收取)</font></span></a>
+                                    </nav>
+                                    <div class="form-group has-feedback">
+                                        <ul class="list-group">
+                                            <li class="list-group-item"><span class="badge" id="deliver_cost">0.00 日元</span> 运费</li>
+                                            <li class="list-group-item"><span class="badge" id="operation_cost">0.00 日元</span> 手续费</li>
+                                            <li class="list-group-item"><span class="badge" id="keep_cost">0.00 日元</span> 保管费</li>
+                                            <li class="list-group-item"><span class="badge" id="insurance_cost">0.00 日元</span> 保险</li>
+                                            <li class="nav-divider"></li>
+                                            <li class="list-group-item"><span class="badge" id="total_cost">0.00 日元</span> <h5>合计</h5></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div>
+                                    <nav class="navbar navbar-default">
+                                        <a class="navbar-brand" href="#">第四步：选择收货地址</a>
+                                    </nav>
+                                    <div class="form-group has-feedback">
+                                        <div id="custom-search-input">
+                                        <div class="input-group col-md-12">
+                                            <select class="form-control custom-search-input" id="address_id"> </select>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-info" type="button" id="add_address_btn">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary" onclick="submitBudget();">提交</button>
+                            </div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+    <div class="modal fade" id="add_address_form" tabindex="-1" role="dialog" aria-labelledby="更改包裹">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @userviews.components.address_form()
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    @javascript.manage_package_js()
+</script>

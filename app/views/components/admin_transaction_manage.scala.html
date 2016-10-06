@@ -1,0 +1,131 @@
+@(   transaction_seq:Seq[dao.Types.Type_user_transaction]   )
+<div class="box">
+    <style>
+        .btn_status{
+        }
+        .btn_status.choosen{
+        background-color: lightblue;
+        font-weight: bold ;
+        }
+        span.info_title{
+        font-weight: bold;
+        }
+    </style>
+
+    @draw_btn(id:Int,status:Int) = {
+        @for( i <- enumerate.TransactionStatus.allStatus) {
+            @defining( if (i == status) "btn_status choosen" else "btn_status" ) { css =>
+                <button onclick="change_state(this,@id,@i)" class="@css" >
+                @{enumerate.TransactionStatus.print(i)}
+                </button>
+            }
+        }
+    }
+
+    @draw_logistic(transaction:Transaction) = {
+    <div>logisticMethod: @enumerate.LogisticMethod.print(transaction.logisticMethod)</div>
+    <div>
+        @if(transaction.needCombine == Some("1")) {
+        <span>"needCombine"</span>}
+        @if(transaction.needDivide == Some("1")){
+        <span>"needDivide"</span>}
+        @if(transaction.needInsurance == Some("1")){
+        <span>"needInsurance"</span>}
+        @if(transaction.needCheck == Some("1")){
+        <span>"needCheck"</span>}
+        @if(transaction.needFirm == Some("1")){
+        <span>"needFirm"</span>}
+        @if(transaction.needFastDelivery == Some("1")){
+        <span>"needFastDelivery"</span>}
+    </div>
+    }
+
+    @draw_cost(transaction:Transaction) = {
+    <div><span class="info_title">totalCost:</span> @transaction.totalCost</div>
+    <div><span class="info_title">deliveryCost:</span> @transaction.deliveryCost</div>
+    <div><span class="info_title">insuranceCost:</span> @transaction.insuranceCost</div>
+    <div><span class="info_title">keepCost:</span> @transaction.keepCost</div>
+    <div><span class="info_title">operationCost:</span> @transaction.operationCost</div>
+    }
+
+    <script lang="javascript">
+
+            function refresh_row_button_style(btn){
+                var btns = $(btn).siblings()
+                $(btns).removeClass('btn_status choosen')
+                $(btn).addClass('btn_status choosen')
+            }
+
+            function change_state(btn,transaction_id,new_status){
+                console.log("first btn",btn)
+
+                $.ajax({
+                    url:"/admin/change_transaction_status/" + transaction_id + "/" + new_status,
+                    method:"POST"
+                }).done(function(response){
+                    console.log(response)
+                    console.log(this)
+                    console.log(btn)
+
+                    if (response.result == "OK"){
+                       var t = response.transaction.sendTime
+                       $("#"+transaction_id+"_sendTime").text(t) // update send time
+                       refresh_row_button_style(btn)
+                    }
+                    else{
+                        alert("ERROR")
+                    }
+                })
+
+            }
+
+        </script>
+
+    <div class="box-body">
+        <table border="1">
+            <thead>
+            <th>User Info</th>
+            <th>Transaction ID</th>
+            <th>Address</th>
+            <th>logistic Info</th>
+            <th>Cost Info</th>
+            <th>Order Number</th>
+            <th>Send Time</th>
+            <th>Status </th>
+            </thead>
+            @for( i <- transaction_seq ){
+                <tr>
+                    @i match {
+                    case (user,transaction,address) => {
+                    <td>
+                        <a href="/admin/view_user?id=@{user.id}">
+                            @user.name  @user.email
+                        </a>
+                    </td>
+
+                    <td>
+                        <a href="/admin/detailed/transaction/@transaction.id"> @transaction.id</a>
+
+                    </td>
+                    <td>@address.shortFormat </td>
+                    <td>
+                        @draw_logistic(transaction)
+                    </td>
+                    <td>
+                        @draw_cost(transaction)
+                    </td>
+                    <td>@transaction.orderNumber </td>
+                    <td id="@{transaction.id}_sendTime">@transaction.sendTime </td>
+                    <td>
+                        @defining(transaction.status.getOrElse(-1) ){ my_status =>
+                            @draw_btn( transaction.id , my_status )
+                        }
+                    </td>
+
+                    }
+                }
+                </tr>
+            }
+        </table>
+    </div>
+</div>

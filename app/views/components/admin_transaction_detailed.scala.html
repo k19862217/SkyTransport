@@ -1,0 +1,45 @@
+@import models._
+
+@(t:Transaction)
+
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th style="width:20%">运费</th>
+            <td style="width:30%"> <input type="text" value="@t.deliveryCost" name="deliveryCost"> </td>
+            <th style="width:20%">保险费</th>
+            <td style="width:30%"><input type="text" value="@t.insuranceCost" name="insuranceCost"> </td>
+        </tr>
+        <tr>
+            <th style="width:20%">总保管费</th>
+            <td style="width:30%"><input type="text" value="@t.keepCost" name="keepCost"> </td>
+            <th style="width:20%">操作费</th>
+            <td style="width:30%"><input type="text" value="@t.operationCost" name="operationCost"> </td>
+        </tr>
+        <tr>
+            <th style="width:20%">总计</th>
+            <td style="width:30%"><input type="text" value="@t.totalCost" name="totalCost"> </td>
+            <th style="width:20%">状态</th>
+            <td style="width:30%"> @templates.transaction_status_options("status",t.status) </td>
+        </tr>
+        <tr>
+            <th style="width:20%">国际快递单号</th>
+            <td style="width:30%"><input type="text" value="@t.orderNumber" name=""> </td>
+            <th style="width:20%">天空快递单号</th>
+            <td style="width:30%">TK_@t.id </td>
+        </tr>
+        <tr>
+            <th style="width:20%">发货方式</th>
+            <td style="width:30%">
+            @templates.delivery_method_options("logisticMethod",t.logisticMethod)
+            </td>
+        </tr>
+        <tr>
+            <th style="width:20%" colspan="1">Other</th>
+            <td style="width:30%" colspan="1">
+            @templates.deliver_options(true,t)
+            </td>
+        </tr>
+    </tbody>
+</table>
