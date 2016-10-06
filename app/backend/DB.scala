@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
 object DB {
 
   //var url = "jdbc:mysql://localhost/zhuanyun"
-  var url = "jdbc:mysql://ec2-54-238-240-255.ap-northeast-1.compute.amazonaws.com:3306/skyzhuanyun"
+  var url = "jdbc:mysql://ec2-54-249-90-223.ap-northeast-1.compute.amazonaws.com:3306/skyzhuanyun"
   //var url = ("jdbc:h2:tcp://localhost/mem:test;DB_CLOSE_DELAY=-1")
   //val url = ("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
   //val url = ("jdbc:h2:~/h2db_test;DB_CLOSE_DELAY=-1")
